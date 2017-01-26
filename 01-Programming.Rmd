@@ -1,6 +1,22 @@
 # In-Class Programming Activity, Day 1
 
-Your work goes here ...
+## Nikhita Jain 
+
+##Task1
+
+```{r}
+library(mosaicData)
+```
+
+##Task 2
+
+```{r}
+task2 = "Today is day() date_time()"
+Sys.time()
+```
+
+
+
 
 
 
