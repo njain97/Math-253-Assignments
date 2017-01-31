@@ -11,10 +11,40 @@ library(mosaicData)
 ##Task 2
 
 ```{r}
-task2 = "Today is day() date_time()"
-Sys.time()
+x = date()
+task2 = paste("Today", "is", x)
+
 ```
 
+
+##Task 3
+
+```{r}
+task3a = names(Galton)
+
+Galton=na.omit(Galton)
+a = nrow(Galton)
+b = ncol(Galton)
+task3b = a*b
+
+task3c = mean(Galton$height)
+```
+
+
+##Task 4
+
+```{r}
+task4 = matrix(c(1,4,2,5,3,6), 2,3)
+```
+
+
+##Task 5
+
+```{r}
+task5x= runif(1000, min=0, max=1)
+task5y = runif(1000, min=0, max=1)
+
+```
 
 
 
