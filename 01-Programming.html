@@ -126,7 +126,40 @@ $(document).ready(function () {
 </div>
 <div id="task1" class="section level2">
 <h2>Task1</h2>
-<pre class="r"><code>library(mosaicData)</code></pre>
+<pre class="r"><code>library(mosaic)</code></pre>
+<pre><code>## Loading required package: dplyr</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
+<pre><code>## Loading required package: car</code></pre>
+<pre><code>## 
+## Attaching package: 'car'</code></pre>
+<pre><code>## The following object is masked from 'package:dplyr':
+## 
+##     recode</code></pre>
+<pre><code>## Loading required package: mosaicData</code></pre>
+<pre><code>## 
+## Attaching package: 'mosaic'</code></pre>
+<pre><code>## The following object is masked from 'package:car':
+## 
+##     logit</code></pre>
+<pre><code>## The following objects are masked from 'package:dplyr':
+## 
+##     count, do, tally</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     binom.test, cor, cov, D, fivenum, IQR, median, prop.test,
+##     quantile, sd, t.test, var</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     max, mean, min, prod, range, sample, sum</code></pre>
 </div>
 <div id="task-2" class="section level2">
 <h2>Task 2</h2>
@@ -137,10 +170,7 @@ task2 = paste(&quot;Today&quot;, &quot;is&quot;, x)</code></pre>
 <h2>Task 3</h2>
 <pre class="r"><code>task3a = names(Galton)
 
-Galton=na.omit(Galton)
-a = nrow(Galton)
-b = ncol(Galton)
-task3b = a*b
+task3b = nrow(Galton)
 
 task3c = mean(Galton$height)</code></pre>
 </div>
@@ -151,7 +181,9 @@ task3c = mean(Galton$height)</code></pre>
 <div id="task-5" class="section level2">
 <h2>Task 5</h2>
 <pre class="r"><code>task5x= runif(1000, min=0, max=1)
-task5y = runif(1000, min=0, max=1)</code></pre>
+task5y = runif(1000, min=0, max=1)
+taskpi= sqrt(task5x^2 + task5y^2)
+task5pi = (sum(taskpi &lt;= 1.0)/1000) *4 </code></pre>
 </div>
 <div id="test-statements" class="section level2">
 <h2>Test statements</h2>
@@ -160,16 +192,16 @@ task5y = runif(1000, min=0, max=1)</code></pre>
 ## Running test statements for day  01</code></pre>
 <pre><code>## Loading required package: scoreActivity</code></pre>
 <pre><code>## Loading required package: lazyeval</code></pre>
-<pre><code>## FAILED: &quot;package:mosaic&quot; %in% search()
+<pre><code>## passed: &quot;package:mosaic&quot; %in% search()
 ## passed: is.character(task2)
 ## passed: grepl(&quot;^Today is&quot;, task2) &amp;&amp; grepl(&quot;201.$&quot;, task2)
 ## passed: all(task3a %in% names(mosaicData::Galton))
-## FAILED: task3b
+## passed: task3b
 ## passed: task3c
 ## passed: all(dim(task4) == c(2, 3))
 ## passed: max(task5x) &lt;= 1 &amp;&amp; min(task5x) &gt;= 0
 ## passed: max(task5y) &lt;= 1 &amp;&amp; min(task5y) &gt;= 0
-## ERROR when running  check(about(pi, pm = 0.5), task5pi)</code></pre>
+## passed: task5pi</code></pre>
 </div>
 </div>
 
