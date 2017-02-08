@@ -13,7 +13,7 @@ d) A flexible model would be worse as flexibility would just increase the amount
 
 2.4.3:
 
-a) ![](name of pic)
+
 
 2.4.6:
 
@@ -44,8 +44,67 @@ b)
 
 ```{r}
 #instead of fix, use view(college) in console 
+#rownames(college) = college[,1]
+#college = college[,-1]
 ```
 
+c) 
+
+```{r}
+
+#i)
+summary(college)
+
+#ii)
+pairs(college[,1:10])
+
+#iii) 
+plot(college$Private, college$Outstate)
+
+#iv) 
+Elite = rep("No", nrow(college))
+Elite[college$Top10perc>50] = "Yes"
+Elite= as.factor(Elite)
+college = data.frame(college, Elite)
+summary(college$Elite)
+plot(college$Elite, college$Outstate)
+
+#v)
+par(mfrow=c(2,2))
+hist(college$Room.Board)
+hist(college$Grad.Rate)
+hist(college$Accept, col=3)
+hist(college$perc.alumni, col=2)
+
+#vi) 
+par(mfrow=c(1,1))
+plot(college$Outstate, college$Grad.Rate)
+
+# High tuition correlates to high graduation rate.
+
+plot(college$Elite, college$Grad.Rate)
+
+#Colleges with the most students from top 10% perc (Elite schools) have higher graduation rate. Their box plot is also not as spread out as non-elite schools. 
+
+```
+
+2.4.9: 
+
+```{r}
+auto_file_name1 = "/home/local/MAC/njain/Math-253-Assignments ssh/Auto.csv"
+Auto = read.csv(auto_file_name1,header=T,na.strings ="?")
+Auto= na.omit(Auto)
+dim(Auto)
+summary(Auto)
+
+#a) 
+#Quantitative: mpg, cylinders, displacement, horsepower, weight, acceleration
+#Qualitative: year, origin, name
+
+#b)
+
+sapply(Auto[,1:7], range)
+```
 #Theory Assignment 
 2.4.2, 2.4.7
 
