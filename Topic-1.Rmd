@@ -12,8 +12,18 @@ c) Flexible would be better as there would be a greater degree of freedom and a 
 d) A flexible model would be worse as flexibility would just increase the amount of variance.
 
 2.4.3:
+included picture- called 2.4.3.JPG
 
-##![(name of pic)
+b)
+squared bias- decreases monotonically because greater flexibility fits the data better. 
+
+Training error - Training error declines monotonically as flexibility increases. This is because as flexibility increases, the data is fit better. 
+
+Test error - concave up as greater flexibility means a better fit till a certain point and then it levels off and starts to increase again (overfits the data). The test error is the sum of Bayes error, bias and variance. Thus it can never lie below the dotted line (Bayes error)
+
+Bayes error - The horizontal dashed line indicates the irreducible error which corresponds to the lowest achievable test MSE among all possible methods. 
+
+Variance - Increases monotonically because increases in flexibility yields overfitting the data. 
 
 2.4.6:
 
