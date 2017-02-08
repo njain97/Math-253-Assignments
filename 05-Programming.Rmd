@@ -1,6 +1,29 @@
 # In-Class Programming Activity, Day 5
 
-Your work goes here ...
+##Nikhita Jain
+
+#Task 1
+
+```{r}
+library(mosaicData)
+nbins = 10
+```
+
+#Task 2
+
+```{r}
+summary(Galton)
+evenly_spaced = seq(56, 79, length = nbins +1)
+evenly_spaced
+```
+
+#Task 3 
+
+```{r}
+bin_counts = cut(Galton$height, breaks=evenly_spaced)
+table(bin_counts)
+```
+
 
 
 
