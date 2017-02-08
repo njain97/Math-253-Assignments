@@ -13,7 +13,7 @@ d) A flexible model would be worse as flexibility would just increase the amount
 
 2.4.3:
 
-
+##![(name of pic)
 
 2.4.6:
 
@@ -67,7 +67,7 @@ Elite[college$Top10perc>50] = "Yes"
 Elite= as.factor(Elite)
 college = data.frame(college, Elite)
 summary(college$Elite)
-plot(college$Elite, college$Outstate)
+boxplot(college$Elite, college$Outstate)
 
 #v)
 par(mfrow=c(2,2))
@@ -102,8 +102,42 @@ summary(Auto)
 #Qualitative: year, origin, name
 
 #b)
+sapply(Auto[,1:6], range)
 
-sapply(Auto[,1:7], range)
+#c) 
+sapply(Auto[,1:6], mean)
+sapply(Auto[,1:6], sd)
+
+#d) 
+newAuto = Auto[-(10:85), ]
+#dim(newAuto) == dim(Auto) - c(76,0)
+#newAuto[9,] == Auto[9,]
+#newAuto[10,] == Auto[86,]
+sapply(newAuto[,1:6], range)
+sapply(newAuto[,1:6], mean)
+sapply(newAuto[,1:6], sd)
+
+#e) 
+pairs(Auto)
+
+plot(Auto$mpg, Auto$weight)
+
+# Heavier weight correlates with lower mpg.
+
+plot(Auto$mpg, Auto$cylinders)
+
+# There is no relation between cylinders and mpg
+
+plot(Auto$mpg, Auto$year)
+
+#There is no obvious relationship between year and mpg
+
+plot(Auto$horsepower, Auto$acceleration)
+
+#As acceleration increases, horsepower decreases
+
+#f)
+#Weight of the car is a good predictor of mpg. It shows a strong negative correlation with mpg. Name, year and cylinder do not have any obvious patterns with mpg and thus would not be good predictors and would overfit the data. 
 ```
 #Theory Assignment 
 2.4.2, 2.4.7
