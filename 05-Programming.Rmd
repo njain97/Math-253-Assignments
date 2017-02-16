@@ -21,7 +21,7 @@ evenly_spaced
 
 ```{r}
 bin_counts = cut(Galton$height, breaks=evenly_spaced)
-table(bin_counts)
+bin_counts = table(bin_counts)
 ```
 
 ##Task 4
