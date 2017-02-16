@@ -225,7 +225,12 @@ confint(lm.fit2)
 
 1) On p. 66 the authors state, “This is clearly not true in Fig. 3.1” Explain why.
 
+----The errors 'E' are correlated to the common variance σ2. This is because figure 3.1 shows the least squares fit line by minimizing the sum of squared errors. This linear fit captures the essence of the reelationship. Hence, by minimizing the sum of squared errors, the line of best fit is found. Thus it cannot be said that the errors are uncorrelated to the common variance. 
+
 2) On p. 77 the authors state, “In this case we cannot even fit the multiple regression models using least squares ….” Explain why.
+
+If there are more predictors than observations, a multiple linear regression model using least squares cannot be determined. 
+
 
 ##3.7.3
 
