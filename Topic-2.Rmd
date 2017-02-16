@@ -1,2 +1,272 @@
 # Topic 2 Exercises: Linear Regression
+#Nikhita Jain
 
+#Computing 
+
+##3.6
+
+```{r}
+library(MASS)
+library(ISLR)
+```
+
+```{r}
+names(Boston)
+
+##making a model with medv as response and lstat as predictor
+
+lm.fit=lm(medv~lstat ,data=Boston)
+attach(Boston)
+lm.fit=lm(medv~lstat)
+
+##mean median etc of model
+
+lm.fit
+summary(lm.fit)
+
+##what other pieces of info are stored in lm.fit
+
+names(lm.fit)
+coef(lm.fit)
+
+##95% confidence inetrval
+
+confint(lm.fit)
+
+##95% Confidence interval with given values of lstat
+
+predict(lm.fit, data.frame(lstat=(c(5,10,15))), interval = "confidence")
+
+##95% Prediction intervals for given values of lstat
+
+predict(lm.fit,data.frame(lstat=(c(5,10,15))), interval = "prediction")
+
+##Plotting lstat and medv and drawing the least squares line
+
+plot(lstat, medv)
+abline(lm.fit)
+
+abline(lm.fit, lwd=3, col="red")
+
+plot(lstat, medv, col="red", pch=20)
+
+plot(1:20,1:20,pch=1:20)
+
+##splitting the screen into 4 parts
+
+par(mfrow=c(2,2))  
+plot(lm.fit)
+
+##Computing residuals from a linear regression fit, studentized residuals
+
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+
+##leverage stats for predictor
+
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+
+##multiple linear regression 
+
+lm.fit=lm(medv~lstat+age,data=Boston)
+summary(lm.fit)
+
+##multiple linear for all predictors
+
+lm.fit = lm(medv~., data=Boston)
+summary(lm.fit)
+
+##calling specific things in summary
+
+summary(lm.fit)$r.sq
+
+##computing variance inflation factors
+
+library(car)
+vif(lm.fit)
+
+##multiple linear for all predictors except age
+
+lm.fit1= lm(medv~.,-age, data=Boston)
+summary(lm.fit1)
+
+lm.fit1 = update(lm.fit, ~.,-age)
+
+##interaction terms
+
+summary(lm(medv~lstat*age,data=Boston))
+
+##Non linear transformation of predictors
+lm.fit2=lm(medv~lstat+I(lstat^2))
+summary(lm.fit2)
+
+##Quantifying how one model is superior to the other
+
+lm.fit= lm(medv~lstat)
+anova(lm.fit, lm.fit2)
+par(mfrow=c(2,2))
+plot(lm.fit2)
+
+##using polygons in models
+
+lm.fit5= lm(medv~poly(lstat,5))
+summary(lm.fit5)
+
+##using logs
+
+summary(lm(medv~log(rm), data= Boston))
+
+##Qualitative predictors
+
+names(Carseats)
+lm.fit= lm(Sales~., +Income:Advertising + Price:Age, data=Carseats)
+summary(lm.fit)
+
+##Coding that R uses for dummy variables
+
+attach(Carseats)
+contrasts(ShelveLoc)
+
+##Creating functions
+
+LoadLibraries= function(){
+  library(MASS)
+  library(ISLR)
+  print("The libraries have been loaded")
+}
+
+LoadLibraries
+LoadLibraries()
+
+```
+##3.7.13
+```{r}
+#a)
+set.seed(1)
+x= rnorm(100)
+
+#b)
+eps= rnorm(100, 0, sqrt(0.25))
+
+#c)
+
+y = -1 + 0.5*x + eps
+length(y)
+#y is of length 100, B0 is -1 and B1 is 0.5
+
+#d) 
+
+plot(x,y)
+
+#I observe a positive linear relationship between x and y. Variance is expected
+
+#e)
+
+lm.fit = lm(y~x)
+summary(lm.fit)
+
+#The B0 in this model is -1.01885 and B1 is 0.49947. This is very close to the values of the actual B0 and B1. The null hypothesis can be rejected as p-value is small and F-statistic is big
+
+#f)
+plot(x,y)
+abline(lm.fit, col="red", lwd=3)
+abline(-1, 0.5, col="blue", lwd =3)
+legend(-1, legend = c("model fit", "population fit"), col=c("red","blue"), lwd=3)
+
+#g)
+
+lm.fit0 = lm(y~x+ I(x^2))
+summary(lm.fit0)
+
+#There is an increase in R2 and RSE which indicates that the model fits the data better. However the p-value of the t-statistic suggests that there is no relation between y and x^2
+
+#h)less noise - lower the variance 
+
+set.seed(1)
+eps1 = rnorm(100, 0, 0.125)
+x1 = rnorm(100)
+y1 = -1 + 0.5*x1 + eps1
+plot(x1, y1)
+lm.fit1 = lm(y1~x1)
+summary(lm.fit1)
+abline(lm.fit1, lwd=3, col="red")
+abline(-1, 0.5, lwd=3, col="blue")
+legend(-1, legend = c("model fit", "pop. regression"), col=c("red", "blue"), lwd=3)
+
+##The error observed in R2 and RSE decrease significantly. This is because the variance has decreased. 
+
+#i) 
+
+set.seed(1)
+eps2 = rnorm(100, 0, 0.5)
+x2 = rnorm(100)
+y2 = -1 + 0.5*x2 + eps2
+plot(x2, y2)
+lm.fit2 = lm(y1~x1)
+summary(lm.fit2)
+abline(lm.fit2, lwd=3, col="red")
+abline(-1, 0.5, lwd=3, col="blue")
+legend(-1, legend = c("model fit", "pop. regression"), col=c("red", "blue"), lwd=3)
+
+##The error observed in R2 and RSE increase significantly. This is because the variance is increased
+
+#j)
+
+confint(lm.fit)
+confint(lm.fit1)
+confint(lm.fit2)
+
+##All intervals seem to be centered at approx 0.5. The second and third confidence intervals are the same. However, they are both narrower than the first confidence interval. 
+
+```
+
+#Reading
+
+1) On p. 66 the authors state, “This is clearly not true in Fig. 3.1” Explain why.
+
+2) On p. 77 the authors state, “In this case we cannot even fit the multiple regression models using least squares ….” Explain why.
+
+##3.7.3
+
+#a) 
+
+Y = 50 + 20(gpa) + 0.07(IQ) + 35(gender) + 0.01(gpa * IQ) - 10 (gpa*gender)
+
+Y = 50 + 20*x_1 + 0.07*x_2 + 35(gender) + 0.01(x_1*x_2) - 10 (x_1*gender)
+
+1 <- male: (gender = 0)   50 + 20 x_1 + 0.07 x_2 + 0.01(x_1 * x_2)
+
+2 <- female: (gender = 1) 50 + 20 x_1 + 0.07 x_2 + 35 + 0.01(x_1 * x_2) - 10 (x_1)
+
+part 2 is correct. For a fixed value of IQ and GPA, females earn more on average than males. This is because equation 2 has a higher value than equation 1. 
+
+#b) 
+Using equation 2 with x_2 = 110 and x_1 = 4.0
+
+=50 + 20 * 4 + 0.07 * 110 + 35 + 0.01 (4 * 110) - 10 * 4
+
+= $137.1
+
+#c) 
+
+False. We must examine the p-value of the regression coefficient to determine whether this term is statistically significant or not. If the p-value is small enough,the term is statistically significant.  
+
+
+##3.7.4
+
+#a)
+
+----I would expect the polynomial regression to have a lower training RSS than the linear regression because it would make a tighter fit against data. This is because it would match with a wider irreducible error. 
+
+#b)
+
+----I would expect the polynomial regression to have a higher test RSS as it would overfit the data from training, which would result in more error than the linear regression.
+
+#c)
+
+----Polynomial regression has lower training RSS than the linear fit because of higher flexibility.
+
+#d)
+
+----There is not enough information to tell which test RSS would be lower. If it is closer to linear than cubic, the linear regression test RSS could be lower than the cubic regression test RSS. The converse is true if it is closer to cubic than linear. 

@@ -1,8 +1,14 @@
 # In-Class Programming Activity, Day 6
+##Nikhita Jain
 
-Your work goes here ...
+##Task 1
 
-
+```{r}
+myHistogram <- function(){
+  
+  
+}
+```
 
 ## Test statements
 
