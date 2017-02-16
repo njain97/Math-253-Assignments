@@ -1,8 +1,39 @@
 # In-Class Programming Activity, Day 7
 
-Your work goes here ...
+##Nikhita Jain
 
+```{r}
+#1
 
+vals = rexp(10, rate = 1/100)
+
+#2
+
+test200 = sum(log(dexp(vals, rate = 1/200)))
+
+#3
+
+LL_exp= function(rate) {sum(log(dexp(vals,rate)))}
+   
+LL_exp(1/200)
+
+#4
+
+rates = 1/(50:200)
+          
+#5
+
+results <- sapply(rates,LL_exp)
+
+#6
+
+plot(1/rates, results)
+
+#7
+
+exp_results <- optimize(LL_exp, lower = 1/200, upper = 1/50, maximum = TRUE)
+exp_results
+```
 
 ## Test statements
 
