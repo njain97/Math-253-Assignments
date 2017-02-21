@@ -229,7 +229,7 @@ confint(lm.fit2)
 
 2) On p. 77 the authors state, “In this case we cannot even fit the multiple regression models using least squares ….” Explain why.
 
-If there are more predictors than observations, a multiple linear regression model using least squares cannot be determined. 
+If there are more predictors than observations, a multiple linear regression model using least squares cannot be determined. This is because there is no unique answer. 
 
 
 ##3.7.3
