@@ -1,8 +1,118 @@
 # In-Class Programming Activity, Day 9
 
-Your work goes here ...
+##Nikhita Jain
+
+```{r}
+Poker_deck = c(outer((10 * 2:14), 1:4, '+'))
+
+suits <- function(Poker_deck){Poker_deck %% 10}
+
+ranks <- function(Poker_deck){Poker_deck %/% 10}
+
+deal <- function(){sample(Poker_deck,5)}
+```
+
+Flush- five cards of the same suit
+
+```{r}
+is_flush <- function(five_cards){
+  counts <- max(table(suits(five_cards)))
+  counts==5
+}
+is_flush(deal())
+```
+
+straight- five consecutively numbered cards
+
+```{r}
+is_straight <- function(five_cards){
+  counts<- ranks(five_cards)
+  max(diff(sort(counts))) == 1
+  
+}
+is_straight(deal())
+```
+
+straight flush- five cards of the same suit in consecutive order
+
+```{r}
+is_straight_flush <- function(five_cards){
+  is_flush(five_cards) == "TRUE" & is_straight(five_cards) =="TRUE"
+}
+is_straight_flush(deal())
+```
+Royal flush - five cards of the same suit with ranks 10, Jack, queen, king, ace.
+
+```{r}
+is_royal_flush <- function(five_cards){
+  is_straight_flush(five_cards) == "TRUE" & min(ranks(five_cards)) == 10
+ }
+is_royal_flush(deal())
+```
+three of a kind
+
+```{r}
+three_of_a_kind <- function(five_cards){
+  counts<- max(table(ranks(five_cards)))
+  counts == 3
+}
+three_of_a_kind(deal())
+```
+
+four of a kind- four cards of the same value and different suits
+
+```{r}
+four_of_a_kind <- function(five_cards){
+  counts<- max(table(ranks(five_cards)))
+  counts == 4
+}
+four_of_a_kind(deal())
+```
+one pair
+
+```{r}
+is_pair <- function(five_cards){
+  counts<- max(table(ranks(five_cards)))
+  counts==2
+}
+is_pair(deal())
+```
+
+full house- three of a kind and one pair
+
+```{r}
+is_full_house <- function(five_cards){
+  counts<- max(table(ranks(five_cards)))
+  count <- min(table(ranks(five_cards)))
+  counts==3 & count ==2 
+}
+is_full_house(deal())
+```
 
 
+two pair
+```{r}
+two_pair <- function(five_cards){
+  counts <- table(ranks(five_cards))==2
+  sum(counts)==2
+}
+two_pair(deal())
+```
+```{r}
+before_draw<- function(five_cards){
+  if (is_royal_flush(five_cards)) return ("royal flush")  
+  if (is_flush(five_cards)) return("flush")  
+  if (is_straight_flush(five_cards)) return("straight flush") 
+  if(is_straight(five_cards)) return("straight")
+  if(is_full_house(five_cards)) return("full house")
+  if(four_of_a_kind(five_cards)) return("four of a kind")
+  if(three_of_a_kind(five_cards)) retunr("three of a kind")
+  if(two_pair(five_cards)) return ("two pair")
+  if(is_pair(five_cards)) return ("pair")
+  return("crappy cards")
+}
+before_draw(deal())
+```
 
 ## Test statements
 
