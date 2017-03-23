@@ -1,9 +1,77 @@
 # In-Class Programming Activity, Day 13
 
-Your work goes here ...
+#Nikhita Jain
 
+```{r}
+k_fold1 <- function(formula, method = lm, data = mtcars, predfun = predict, k = 10) {
+  # do the calculations, 
+  # producing an estimate of error
+  return(error_estimate)
+}
+```  
 
+make k-sets
 
+```{r}
+k=10
+sets <-rep(1:k, each = nrow(mtcars)/k, length.out = nrow(mtcars))
+```
+
+the loop
+
+```{r}
+## accumulator will be updated as you go through the loop
+mspe <- numeric(k)
+for (i in 1:k) {
+  For_Testing <- data.frame(mtcars[sets==i, ]) 
+  For_Training <- data.frame(mtcars[sets!= i, ])
+  mod<- lm(mpg~ hp+ wt + am, data = For_Training)
+  pred_vals <- predict(mod, newdata = For_Testing)
+  mspe[i] <- mean((For_Testing[["mpg"]] - pred_vals)^2) 
+ }
+mean(mspe)
+
+```
+
+```{r}
+k_fold1 <- function(formula, method = lm, data = mtcars, predfun = predict, k = 10) {
+  sets <-rep(1:k, each = nrow(mtcars)/k, length.out = nrow(mtcars))
+  
+  mspe <- numeric(k)
+for (i in 1:k) {
+  For_Testing <- mtcars[sets==i, ] 
+  For_Training <- mtcars[sets!= i, ]
+  mod<- lm(mpg~ hp+ wt + am, data = For_Training)
+  pred_vals <- predict(mod, newdata = For_Testing)
+  mspe[i] <- mean((For_Testing[["mpg"]] - pred_vals)^2) 
+ }
+error_estimate <- mean(mspe)
+
+  return(error_estimate)
+}
+
+k_fold1()
+```
+
+```{r}
+k_fold <- function(formula, method = lm, data = mtcars, predfun = predict, k = 10) {
+  sets <-rep(1:k, each = nrow(data)/k, length.out = nrow(data))
+  
+  mspe <- numeric(k)
+for (i in 1:k) {
+  For_Testing <- data[sets==i, ] 
+  For_Training <- data[sets!= i, ]
+  mod<- method(formula, data = For_Training)
+  pred_vals <- predfun(mod, newdata = For_Testing)
+  mspe[i] <- mean((For_Testing[[as.character(formula[[2]])]] - pred_vals)^2) 
+ }
+error_estimate <- mean(mspe)
+
+  return(error_estimate)
+}
+
+k_fold(formula = mpg ~ hp + wt + am, data=mtcars)
+```
 ## Test statements
 
 ```{r}
