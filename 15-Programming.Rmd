@@ -1,7 +1,60 @@
 # In-Class Programming Activity, Day 15
 
-Your work goes here ...
+#Nikhita Jain
 
+```{r}
+#download.file(("http://tiny.cc/dcf/mona.rda"), destfile = "mona.rda")
+load("mona.rda")
+X <- t(mona) - mean(mona[])
+
+X_rand <- matrix(rnorm(prod(dim(X)), mean=0, sd=1), ncol= 191, byrow = TRUE)
+X1 <- chol(var(X))
+X_corr <- X_rand %*% X1 
+
+#sparse beta
+beta<- sample(c(rep(0,175), rep(-4, 4), rep(-3, 4), rep(2, 4), rep(5,4)))
+
+#The output
+
+Y_pure<- X%*%beta 
+y= 0.1 * var(Y_pure)
+y1 = sqrt(y)
+Y_real <- X%*%beta + rnorm(nrow(X), mean =0, sd = y1) 
+
+#Least squares
+
+beta_hat_pure <- coef(lm(Y_pure~X-1))
+plot(beta_hat_pure, beta)
+
+beta_hat_real <- coef(lm(Y_real~X-1))
+plot(beta_hat_real, beta)
+
+#Lasso estimator
+library(glmnet)
+lasso_mod <- cv.glmnet(X, Y_real, alpha=1)
+beta_lasso <- predict(lasso_mod, type = "coefficients", s = lasso_mod$lambda.min)
+
+#Principle components
+
+sing_vals <- svd(X)$d
+n99 <- cumsum(sing_vals^2)/sum(sing_vals^2)
+plot(n99)
+n99 <- min(which(n99>.99))
+
+sing_vals1 <-svd(X_rand)$d
+n99_rand <- cumsum(sing_vals1^2)/sum(sing_vals1^2)
+plot(n99_rand)
+n99_rand <- min(which(n99_rand>.99))
+
+sing_vals2 <-svd(X_corr)$d
+n99_corr <- cumsum(sing_vals2^2)/sum(sing_vals2^2)
+plot(n99_corr)
+n99_corr <- min(which(n99_corr>.99))
+
+library(pls)
+pcr.fit <- pcr(Y_real ~ X, scale = TRUE, validation="CV") 
+R2(pcr.fit)
+```
 
 
 ## Test statements
