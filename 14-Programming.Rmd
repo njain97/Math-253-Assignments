@@ -1,7 +1,36 @@
 # In-Class Programming Activity, Day 14
 
-Your work goes here ...
+#Nikhita Jain 
 
+```{r}
+library(glmnet)
+GenCont <- read.csv("http://tiny.cc/dcf/GenCont.csv")
+
+compare_ols_ridge <- function(responses= GenCont[,1], predictors=GenCont[,-1], lambda=1){
+  i <- sample(1:length(responses), size= length(responses)/2)
+  
+  Response_Training <- responses[i]
+  Predict_Training <- as.matrix(predictors[i,])
+  
+  Response_Testing <- responses[-i] #it is a vector so no comma
+  Predict_Testing <- predictors[-i,] #it is a matrix
+ 
+  ols_mod <- lm(Response_Training~ Predict_Training)
+  ridge_mod <- glmnet(Predict_Training,Response_Training, alpha=0)
+  
+  ols_in <- mean((predict(ols_mod) - Response_Training)^2)
+  ridge_in <- mean((predict(ridge_mod, newx = Predict_Training) - Response_Training)^2)
+  
+  ols_out <- mean((predict(ols_mod, newx = Predict_Testing) - Response_Testing)^2)
+  ridge_out <- mean((predict(ridge_mod, newx = as.matrix(Predict_Testing)) - Response_Testing)^2)
+  
+  Vector <- c(lambda=lambda, ols_in=ols_in, ols_out=ols_out,ridge_in=ridge_in, ridge_out=ridge_out)
+  return (Vector)
+  
+}
+
+Shrink_results<- compare_ols_ridge(responses= GenCont[,1], predictors=GenCont[,-1], lambda=1)
+```
 
 
 ## Test statements
