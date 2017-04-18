@@ -1,8 +1,56 @@
 # In-Class Programming Activity, Day 11
 
-Your work goes here ...
+#Nikhita Jain
+
+```{r}
+
+#Task 1
 
 
+Sigma <- matrix(c(1.0, -0.7, -0.7, 1.0), nrow=2, ncol=2, byrow=TRUE)
+Sigma_inv <- solve(Sigma)
+test_inverse <- Sigma %*% Sigma_inv
+
+#Task 2
+
+A <- chol(Sigma)  
+B<- t(A)  
+C<- B %*% A 
+C
+
+#This product is equal to sigma 
+
+#Task 3
+
+x1 <- rnorm(10)
+x2 <- rnorm(10)
+
+x1 <- cbind(x1)
+x2 <- cbind(x2) #Make vectors one column matrices
+t(x1) %*% x2
+
+
+X <- cbind(x1, x2)
+Z<- (t(X) %*% X)
+Z1 <- Z/nrow(X) #covariance matrix
+
+w1 <- cbind(rnorm(10000))
+w2 <- cbind(rnorm(10000))
+W <- cbind(w1, w2)
+W_cov <- (t(W) %*% W)/nrow(W)
+W_cov
+
+#Task 4
+
+A_inv <- chol(solve(Sigma))
+Y <- X %*% A
+(t(Y) %*% Y)/nrow(Y)
+Y <- W %*% A
+D <- (t(Y) %*% Y)/nrow(Y)
+D1 <- Sigma-D
+
+plot(Y[,1], Y[,2], col=rgb(0,0,0,0.5))
+```
 
 ## Test statements
 
