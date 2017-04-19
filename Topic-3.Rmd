@@ -1,2 +1,4 @@
 # Topic 3 Exercises: Likelihood
 
+#Nikhita Jain
+No assignment, finish ICAs from previous topics 
