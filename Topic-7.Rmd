@@ -1,2 +1,99 @@
 # Topic 7 Exercises: Nonlinear regression
 
+programming: 7.9.11
+
+theory: in §7.9 problems 3, 4, and 5
+
+#7.9.3
+
+```{r}
+x = c(-2,-1,0,1,2)
+y = 1 + x + -2 *(x-1)^2 *I(x>=1)
+plot(x, y)
+
+#The intercept is -1. It is a downward parabola. The value of y increases between x = -2 and 1, and decreases after that (between x=1 and 2)
+```
+
+#7.9.4
+
+```{r}
+x = c(-2,-1,0,1,2)
+y = c(1 + 0 + 0, #when x= -2
+      1 + 0 + 0, 
+      1 + 1 + 0, 
+      1 + 1 + 0, 
+      1 + 0 + 0)
+y1 = c(1,1,2,2,1)
+plot(x,y1)
+
+#The intercept is 1. The slope is 0 when x is between -2 and -1. The slope becomes positive between x = -1 and 0. It is once again 0 between x=0,1 and then becomes negative between x=1,2. 
+```
+
+#7.9.5
+
+a) We would expect g2 to have the smaller training RSS. This is because the order of the derivative penalty function is 4, which is higher than 3 in the case of g1. Thus, g2 is a higher order polynomial. 
+
+b) g1 would have the smaller test RSS. This is because g2 has an extra degree of freedom and could overfit the data. g1 has a smaller degree of freedom and thus has a smaller chance of overfitting the data. 
+
+c) When lambda =0, both g1 and g2 will be equal to each other. Thus, their training and test RSS would be equal. 
+
+#7.9.11
+
+```{r}
+#a) 
+#My equation is Y = -2 + 1X1 + 0.69X2 + e
+
+set.seed(1)
+X1 = rnorm(100)
+X2 = rnorm(100)
+error = rnorm(100, sd = 0.1)
+Y = -2 + 1*X1 + 0.69*X2 + error #Genreate a response
+
+#b) 
+#b1 to be 25
+
+b0 = rep(NA, 1000)
+b1 = rep(NA, 1000)
+b2 = rep(NA, 1000)
+b1[1] = 15
+```
+
+```{r}
+#c, d and e) 
+
+for (i in 1:1000) {
+    a = Y - b1[i] * X1
+    b2[i] = lm(a ~ X2)$coef[2]
+    a = Y - b2[i] * X2
+    mod1 <- lm(a ~ X1)
+    if (i < 1000) {
+        b1[i + 1] = mod1$coef[2]
+    }
+    b0[i] = mod1$coef[1]
+}
+plot(1:1000, b0, type = "l", xlab = "Iterations 1 to 1000", ylab = "Beta 0,1,2", ylim = c(-3, 2), col = "red")
+lines(1:1000, b1, col = "green")
+lines(1:1000, b2, col = "blue")
+legend("center", lty=2, c("beta0", "beta1", "beta2"), col = c("red", "green", 
+    "blue"))
+```
+It is seen that the coefficients quickly reach their least square errors. 
+
+```{r}
+#f)
+mod1<- lm(Y ~ X1 + X2)
+
+plot(1:1000, b0, type = "l", xlab = "Iterations 1 to 1000", ylab = "Beta 0,1,2", ylim = c(-3, 2), col = "red")
+lines(1:1000, b1, col = "green")
+lines(1:1000, b2, col = "blue")
+abline(h = mod1$coef[1], lty = "dashed", lwd = 4, col = rgb(0, 0, 0, alpha = 0.4))
+abline(h = mod1$coef[2], lty = "dashed", lwd = 4, col = rgb(0, 0, 0, alpha = 0.4))
+abline(h = mod1$coef[3], lty = "dashed", lwd = 4, col = rgb(0, 0, 0, alpha = 0.4))
+legend("center", c("beta0", "beta1", "beta2", "multiple regression"), lty = c(1,1,1,2), col=c("red","green","blue","black"))
+
+```
+It is seen that both match perfectly. 
+
+g)
+
+Thus, it is seen that when X has a linear relationship to Y, one iteration is enough to get a good fit. 
