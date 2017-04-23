@@ -1,2 +1,110 @@
 # Topic 8 Exercises: Tree-based models
 
+Theory: In 8.4 problems 1,2,3,4, and 5
+
+Q) 8.4.1 
+Uploaded picture - 8.4.1JPG
+
+
+Q) 8.4.3
+
+```{r}
+pm = seq(0, 1, 0.02)
+Gini_index = pm * (1 - pm) * 2
+cross_entropy = -(pm * log(pm) + (1 - pm) * log(1 - pm))
+Classification_error = 1 - pmax(pm, 1 - pm)
+matplot(pm, cbind(Gini_index, cross_entropy, Classification_error), col = c("green", "red", "blue"))
+```
+
+Q) 8.4.4
+
+a) uploaded picture 8.4.4a.JPG
+
+b) 
+
+```{r}
+plot(NA, NA, type = "n", xlim = c(-2, 2), ylim = c(-3, 3), xlab = "X1", ylab = "X2")
+
+lines(x = c(-2, 2), y = c(1, 1))
+
+lines(x = c(1, 1), y = c(-3, 1))
+text(x = -0.5, y = -1.5, labels = -1.8)
+text(x = 1.5, y = -1.5, labels = 0.63)
+
+lines(x = c(-2, 2), y = c(2, 2))
+text(x = 0, y = 2.5, labels = 2.49)
+
+lines(x = c(0, 0), y = c(1, 2))
+text(x = -1, y = 1.5, labels = -1.06)
+text(x = 1, y = 1.5, labels = 0.21)
+```
+
+Q) 8.4.5
+
+p= 0.1, 0.15, 0.2, 0.2, 0.55, 0.6, 0.6, 0.65, 0.7, and 0.75
+
+Majority vote approach: In p, are there more values greater than 0.5 or lesser than 0.5? 
+number of p's greater than 0.5: 6
+number of p's smaller than 0.5: 4
+
+Thus, majority vote approach says that X belongs to the red class. 
+
+Average probability: Sum of probabilities/10
+
+```{r}
+p = c(0.1, 0.15, 0.2, 0.2, 0.55, 0.6, 0.6, 0.65, 0.7, 0.75)
+sum(p)
+```
+The sum is 4.5: This means that average probability approach says that X belongs to green. 
+
+
+Programming: 8.4.12
+
+```{r}
+set.seed(1)
+library(ISLR)
+library(randomForest)
+mathAlcohol <- read.csv("student-mat.csv")
+```
+
+```{r}
+set.seed(1)
+inds <- sample(1:nrow(mathAlcohol), size = nrow(mathAlcohol)/2)
+trainSet <- mathAlcohol[inds, ]
+testSet <- mathAlcohol[-inds, ]
+test.Set<-mathAlcohol[-inds, "medv"]
+```
+
+```{r}
+#Logistic regression
+
+glm.fit <- glm(Dalc ~ . - Walc , data = trainSet)
+glm.probs <- predict(glm.fit, newdata = testSet, type = "response")
+mean((glm.probs-test.Set)^2)
+
+#The error rate is 0.604
+```
+
+```{r}
+#Boosting
+library(gbm)
+mod1 <- gbm(Dalc ~ . - Walc, data = trainSet, distribution="gaussian", n.trees =100)
+mod2 <- predict(mod1, newdata = testSet, n.trees = 100)
+mean((mod2-test.Set)^2)
+```
+
+```{r}
+#Bagging
+mod3 <- randomForest(Dalc ~ . - Walc, data=trainSet, mtry=31, importance=TRUE)
+mod4 <- predict(mod3, data=testSet)
+mean((mod4 - test.Set)^2)
+
+```
+
+```{r}
+
+#Random Forest
+mod3 <- randomForest(Dalc ~ . - Walc, data=trainSet, mtry=15, importance=TRUE) 
+mod4 <- predict(mod3, data=testSet)
+mean((mod4 - test.Set)^2)
+```
