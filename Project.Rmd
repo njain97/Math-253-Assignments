@@ -1,5 +1,115 @@
-# Abstract for the End-of-Term Project
+## MATH 253: Machine Learning
+## Kaggle Course Project
+## Team Members: Jina Park, Nikhita Jain, Nadia Berriel
 
-You'll give a description of your project here, including the names of all of your group members.
 
-Also, give a link to the public GitHub repository you and your team created to hold your work.
+### Description of the problem setting
+The problem we are attempting to solve is alcohol consumption level among mathematics students in secondary schools. We aim to use machine learning to predict the alcohol consumption level of these students based on different variables such as romantic relationship status, extracurricular activities, parent’s education levels, and study time. In addition, we hope to formulate a prediction with an uncertainty of approximately 15%. 
+
+### Brief description of the data
+The data is obtained from UCI Machine Learning and contains social, gender, and study information about students. The response variables that we will investigate are Dalc and Walc, which represent workday and weekday alcohol consumption, respectively. There are 383 students in the dataset, where the students can be identified by searching for identical attributes that characterize each student. The website for the dataset is at: https://www.kaggle.com/uciml/student-alcohol-consumption. Given the random controlled setting of this data, there was no missing data.
+
+
+### Classification and regression methods applied
+```{r}
+library(ISLR)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+mathAlcohol <- read.csv("student-mat.csv")
+```
+
+```{r}
+mod1 <- rpart(Dalc~.- Walc, data=mathAlcohol)
+prp(mod1)
+```
+
+```{r}
+mod2 <- randomForest(Dalc ~ . - Walc, data=mathAlcohol)
+importance(mod2)
+```
+
+## Linear Model 
+```{r}
+set.seed(1)
+inds <- sample(1:nrow(mathAlcohol), size = nrow(mathAlcohol)/2)
+trainSet <- mathAlcohol[inds, ]
+testSet <- mathAlcohol[-inds, ]
+```
+
+```{r}
+lm.fit <- lm(Dalc ~ ., data=trainSet)
+lm.pred <- predict(lm.fit, testSet)
+mean((lm.pred - testSet$Dalc)^2)
+```
+
+The test error for the linear model is 0.5016.
+
+## Linear Regression Plot
+```{r}
+boxplot(mathAlcohol$Dalc, mathAlcohol$sex, xlab="Sex", ylab="Weekly Average Alcohol Consumption")
+boxplot(Dalc ~ studytime, data = mathAlcohol, xlab="Study Time", ylab="Weekly Average Alcohol Consumption")
+library(ggplot2)
+ggplot(mathAlcohol, aes(x = freetime, y = Dalc, color = sex)) + geom_jitter(alpha = .3) 
+
+ggplot(mathAlcohol, aes(x = freetime, y = Dalc)) + geom_jitter(alpha = .3) + facet_grid(sex ~ studytime)
+```
+
+## Ridge
+```{r}
+library(glmnet)
+```
+
+```{r}
+trainMatrix <- model.matrix(Dalc ~ . - Walc, data=trainSet)
+testMatrix <- model.matrix(Dalc ~ . - Walc, data=testSet)
+grid <- 10^seq(4, -2, length=100)
+ridge.fit <- glmnet(trainMatrix, trainSet$Dalc, alpha=0, lambda=grid, thresh=1e-12)
+ridge.cv <- glmnet(trainMatrix, trainSet$Dalc, alpha=0, lambda=grid, thresh=1e-12)
+ridge.bestLambda <- ridge.cv$lambda.min
+ridge.pred <- predict(ridge.fit, s=ridge.bestLambda, newx=testMatrix)
+mean((ridge.pred - testSet$Dalc)^2)
+```
+
+The test error for the ridge regression is 0.6783.
+
+## Lasso
+```{r}
+lasso.fit <- glmnet(trainMatrix, trainSet$Dalc, alpha=1, lambda=grid, thresh=1e-12)
+lasso.cv <- glmnet(trainMatrix, trainSet$Dalc, alpha=1, lambda=grid, thresh=1e-12)
+lasso.bestLambda <- lasso.cv$lambda.min
+lasso.pred <- predict(lasso.fit, s=lasso.bestLambda, newx=testMatrix)
+mean((lasso.pred - testSet$Dalc)^2)
+```
+
+The test error for the lasso regression is 0.7285.
+
+### K-Fold Cross-Validation
+```{r}
+k_fold <- function(formula, method = lm, data = mathAlcohol, predfun = predict, k = 10) {
+  sets <- rep(1:k, each = nrow(data)/k, length.out = nrow(data))
+  mspe <- numeric(k)
+  
+  for (i in 1:k) {
+    For_Training <- data[sets != i, ]
+    For_Testing <- data[sets == i, ]
+    mod <- method(formula, data = For_Training)
+    pred_vals <-predfun(mod, newdata = For_Testing)
+    mspe[i] <- mean((For_Testing[[as.character(formula[[2]])]] - pred_vals)^2)
+  }
+  error_estimate <- mean(mspe)
+  return(error_estimate)
+}
+```
+
+## Generalizing the function
+```{r}
+k_fold(formula = Dalc ~ sex + age + Medu + Fedu + Mjob + Fjob + reason + traveltime + studytime + famrel + freetime + goout + health + absences + G1 + G2 + G3, data = mathAlcohol)
+```
+
+The in-sample error for the K-Fold cross validation is 0.7045 when k = 10. This error is biased to be lower than cross-validated prediction errors.
+
+### Evaluation of results
+Our model provides meaningful results to the purpose of this project. We now have a better understanding of what variables predict weekly average alcohol consumption among math students. Some of the variables that are highly predictive of weekly average alcohol consumption are sex, age, parent's education levels, grades, and absences. One way in which a better result might be found is having a larger dataset and thus larger testing and training data. This could potential lead to a smaller variance. Rather than treating our Dalc variable as continuous, we could produced a dummy variable for whether the students drink alcohol during the day. Using this dummy variable, we could have instead used a logistic regression and LDA and QDA models.
+
+### Speculative ideas about how better results can be achieved
