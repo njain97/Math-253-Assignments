@@ -175,15 +175,14 @@ library(randomForest)</code></pre>
 <pre class="r"><code>set.seed(1)
 inds &lt;- sample(1:nrow(mathAlcohol), size = nrow(mathAlcohol)/2)
 trainSet &lt;- mathAlcohol[inds, ]
-testSet &lt;- mathAlcohol[-inds, ]
-test.Set&lt;-mathAlcohol[-inds, &quot;medv&quot;]</code></pre>
+testSet &lt;- mathAlcohol[-inds, ]</code></pre>
 <pre class="r"><code>#Logistic regression
 
 glm.fit &lt;- glm(Dalc ~ . - Walc , data = trainSet)
 glm.probs &lt;- predict(glm.fit, newdata = testSet, type = &quot;response&quot;)
-mean((glm.probs-test.Set)^2)</code></pre>
-<pre><code>## [1] NaN</code></pre>
-<pre class="r"><code>#The error rate is 0.604</code></pre>
+mean((glm.probs-testSet$Dalc)^2)</code></pre>
+<pre><code>## [1] 0.7908183</code></pre>
+<pre class="r"><code>#The error rate is 0.226</code></pre>
 <pre class="r"><code>#Boosting
 library(gbm)</code></pre>
 <pre><code>## Loading required package: survival</code></pre>
@@ -193,22 +192,30 @@ library(gbm)</code></pre>
 <pre><code>## Loaded gbm 2.1.3</code></pre>
 <pre class="r"><code>mod1 &lt;- gbm(Dalc ~ . - Walc, data = trainSet, distribution=&quot;gaussian&quot;, n.trees =100)
 mod2 &lt;- predict(mod1, newdata = testSet, n.trees = 100)
-mean((mod2-test.Set)^2)</code></pre>
-<pre><code>## [1] NaN</code></pre>
+mean((mod2-testSet$Dalc)^2)</code></pre>
+<pre><code>## [1] 0.8114859</code></pre>
+<pre class="r"><code>#The error rate is 0.237</code></pre>
 <pre class="r"><code>#Bagging
 mod3 &lt;- randomForest(Dalc ~ . - Walc, data=trainSet, mtry=31, importance=TRUE)</code></pre>
 <pre><code>## Warning in randomForest.default(m, y, ...): The response has five or fewer
 ## unique values. Are you sure you want to do regression?</code></pre>
 <pre class="r"><code>mod4 &lt;- predict(mod3, data=testSet)
-mean((mod4 - test.Set)^2)</code></pre>
-<pre><code>## [1] NaN</code></pre>
+mean((mod4 - testSet$Dalc)^2)</code></pre>
+<pre><code>## Warning in mod4 - testSet$Dalc: longer object length is not a multiple of
+## shorter object length</code></pre>
+<pre><code>## [1] 0.9716412</code></pre>
+<pre class="r"><code>#The error rate is 0.265</code></pre>
 <pre class="r"><code>#Random Forest
-mod3 &lt;- randomForest(Dalc ~ . - Walc, data=trainSet, mtry=15, importance=TRUE) </code></pre>
+mod3 &lt;- randomForest(Dalc ~ . - Walc, data=trainSet, mtry=10, importance=TRUE) </code></pre>
 <pre><code>## Warning in randomForest.default(m, y, ...): The response has five or fewer
 ## unique values. Are you sure you want to do regression?</code></pre>
 <pre class="r"><code>mod4 &lt;- predict(mod3, data=testSet)
-mean((mod4 - test.Set)^2)</code></pre>
-<pre><code>## [1] NaN</code></pre>
+mean((mod4 - testSet$Dalc)^2)</code></pre>
+<pre><code>## Warning in mod4 - testSet$Dalc: longer object length is not a multiple of
+## shorter object length</code></pre>
+<pre><code>## [1] 0.9113064</code></pre>
+<pre class="r"><code>#The error rate is 0.253</code></pre>
+<p>Thus, logistic regression has the smallest error rate as seen above (0.226)</p>
 </div>
 
 

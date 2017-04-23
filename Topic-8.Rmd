@@ -72,7 +72,6 @@ set.seed(1)
 inds <- sample(1:nrow(mathAlcohol), size = nrow(mathAlcohol)/2)
 trainSet <- mathAlcohol[inds, ]
 testSet <- mathAlcohol[-inds, ]
-test.Set<-mathAlcohol[-inds, "medv"]
 ```
 
 ```{r}
@@ -80,9 +79,9 @@ test.Set<-mathAlcohol[-inds, "medv"]
 
 glm.fit <- glm(Dalc ~ . - Walc , data = trainSet)
 glm.probs <- predict(glm.fit, newdata = testSet, type = "response")
-mean((glm.probs-test.Set)^2)
+mean((glm.probs-testSet$Dalc)^2)
 
-#The error rate is 0.604
+#The error rate is 0.226
 ```
 
 ```{r}
@@ -90,21 +89,27 @@ mean((glm.probs-test.Set)^2)
 library(gbm)
 mod1 <- gbm(Dalc ~ . - Walc, data = trainSet, distribution="gaussian", n.trees =100)
 mod2 <- predict(mod1, newdata = testSet, n.trees = 100)
-mean((mod2-test.Set)^2)
+mean((mod2-testSet$Dalc)^2)
+
+#The error rate is 0.237
 ```
 
 ```{r}
 #Bagging
 mod3 <- randomForest(Dalc ~ . - Walc, data=trainSet, mtry=31, importance=TRUE)
 mod4 <- predict(mod3, data=testSet)
-mean((mod4 - test.Set)^2)
+mean((mod4 - testSet$Dalc)^2)
 
+#The error rate is 0.265
 ```
 
 ```{r}
 
 #Random Forest
-mod3 <- randomForest(Dalc ~ . - Walc, data=trainSet, mtry=15, importance=TRUE) 
+mod3 <- randomForest(Dalc ~ . - Walc, data=trainSet, mtry=10, importance=TRUE) 
 mod4 <- predict(mod3, data=testSet)
-mean((mod4 - test.Set)^2)
+mean((mod4 - testSet$Dalc)^2)
+
+#The error rate is 0.253
 ```
+Thus, logistic regression has the smallest error rate as seen above (0.226)
