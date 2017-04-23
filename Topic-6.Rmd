@@ -1,2 +1,96 @@
 # Topic 6 Exercises: Selecting Model Terms
 
+#Nikhita Jain
+
+Theory: 6.8.1, 6.8.2
+Assignment: 6.8.9
+
+#6.8.1
+a) Best subset selection has the smallest training RSS. This is because it looks at every possible model. For example, if there were p predictors, it would look at 2^p models to find the best one. 
+Forward step wise and backward step wise determine models based on which predictors they pick first. Thus, they do not look at every possible model. However, they are easier to compute than best subset selection. 
+
+b) Best subset selection may have the smallest test RSS because as said above, it considers more models then the other methods. However, if the other methods pick a model that fits the data well too, they could have a small test RSS as well.  
+
+c) 
+i) True
+ii) True
+iii) False
+iv) False
+v) False
+
+#6.8.2
+
+a) iii) is correct. This is because the lasso method is less flexible than least squares. The lasso method has least variance due to its decreased flexibility but has more bias as compared to least squares. Hence, it will give improved prediction accuracy when its increase in bias is less than its decrease in variance.
+
+b) iii) is correct. Ridge regression is less flexible than least squares. It has less variance and more bias as compares to least squares. Hence, it will give improved prediction accuracy when its increase in bias is less than its decrease in variance.
+
+c) ii) is correct. Non linear methods are more flexible than least squares. Thus, they have more variance and less bias. Hence, it will give improved prediction accuracy when its increase in variance is less than its decrease in bias.
+
+#6.8.9
+
+```{r}
+library(ISLR)
+library(glmnet)
+library(pls)
+
+
+#a) 
+
+set.seed(1)
+sample <- sample(1:nrow(College), size = nrow(College)/2)
+train_set <- College[sample, ]
+test_set <- College[-sample, ]
+
+#b) 
+
+lm.fit <- lm(Apps ~ ., data=train_set)
+lm.pred <- predict(lm.fit, test_set)
+mean((lm.pred - test_set$Apps)^2)
+#The test error rate is 1088625
+
+#c) 
+
+training_matrix <- model.matrix(Apps ~ ., data=train_set)
+testing_matrix <- model.matrix(Apps ~ ., data=test_set)
+grid <- 10^seq(4, -2, length=100)
+ridge.fit <- glmnet(training_matrix, train_set$Apps, alpha=0, lambda=grid, thresh=1e-12)
+ridge.cv <- glmnet(training_matrix, train_set$Apps, alpha=0, lambda=grid, thresh=1e-12)
+ridge.bestL <- ridge.cv$lambda.min
+
+ridge.pred <- predict(ridge.fit, s=ridge.bestL, newx=testing_matrix)
+mean((ridge.pred - test_set$Apps)^2)
+
+#The error rate is 1171678
+
+#d) 
+
+lasso.fit <- glmnet(training_matrix, train_set$Apps, alpha=1, lambda=grid, thresh=1e-12)
+lasso.cv <- glmnet(training_matrix, train_set$Apps, alpha=1, lambda=grid, thresh=1e-12)
+lasso.bestL <- lasso.cv$lambda.min
+lasso.pred <- predict(lasso.fit, s=lasso.bestL, newx=testing_matrix)
+mean((lasso.pred - test_set$Apps)^2)
+
+#The error rate is 2162352
+
+
+#e) 
+
+PCR.fit <- pcr(Apps~., data= train_set, scale=T, validation="CV")
+validationplot(PCR.fit, val.type="MSEP")
+PCR.pred <- predict(PCR.fit, data= test_set, ncomp=10)
+mean((train_set[, "Apps"] - data.frame(PCR.pred))^2)
+#The error rate is 2753346
+
+#f) 
+
+PLS.fit = plsr(Apps~., data=train_set, scale=T, validation="CV")
+validationplot(PLS.fit, val.type="MSEP")
+PLS.pred = predict(PLS.fit, test_set, ncomp=10)
+mean((test_set[, "Apps"] - data.frame(PLS.pred))^2)
+#The error rate is 1144453
+
+#g)
+
+#All models except PCR predict college apps with high accuracy 
+
+```
