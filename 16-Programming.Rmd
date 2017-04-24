@@ -1,7 +1,79 @@
 # In-Class Programming Activity, Day 16
 
-Your work goes here ...
+#Nikhita Jain
 
+```{r}
+#save(Wage, file="Wage.RData")
+#load(file="Wage.RData")
+#attach(Wage)
+
+#The knots
+
+my_knots <- function(x,k) {
+  
+  knots = numeric(k)
+  for (i in 1:k){
+    y = i/(k+1)
+    knots[i] = y
+  }
+ quantile(x, knots)
+  
+}
+
+#The basis set
+
+spline_model_matrix <- function(x, knot_locations){
+  #knot_locations <- my_knots(x,k)
+
+MM <- cbind(1,x, x^2, x^3)
+    
+  for (i in knot_locations) {
+    #print(x)
+    if (x > i){
+      new_vector <- ((x-i)^3) 
+      MM <- cbind(MM, new_vector)
+    }
+        else{
+          MM <- cbind(MM, 0)
+        }
+  }
+return(MM)
+}
+
+#finding the best linear combinations
+
+fit_spline <- function(formula, k=2, data=parent.frame()) {
+  y <- eval(formula[[2]], envir=data)
+  x <- eval(formula[[3]], envir=data)
+  knot_locations <- my_knots(x, k)
+  MM <- spline_model_matrix(x, knot_locations)
+  mod <- lm(y ~ MM - 1)
+  res <- list(coef = coef(mod), knots = knot_locations, cov = vcov(mod))
+  class(res) <- "my_spline"
+  
+  return(res)
+}
+
+
+#Predict function 
+
+predict.my_spline <- function(mod, newx, level = 0.95, intervals=c("none", "confidence", "prediction")) {
+  intervals <- match.arg(intervals)
+  MM <- spline_model_matrix(newx, mod$knots)
+  vals <- MM %*% mod$coef
+  se <- sqrt(rowSums(MM %*% mod$cov * MM))
+  if (intervals == "none") 
+    return(vals)
+  else 
+    return(NULL) # for future use
+}
+
+model<- fit_spline(wage~age, k=4, data= Wage)
+plot(wage~age, data=Wage)
+#x <- seq(20,80,by=1)
+#y <- predict(model, newx=x)
+#lines(x,y)
+```
 
 
 ## Test statements
