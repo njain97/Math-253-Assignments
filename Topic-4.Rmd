@@ -24,11 +24,12 @@ Auto = data.frame(Auto, mpg01)
 #b) 
 
 cor(Auto[,-9])
-#mpg01 is negatively correlated with cylinders, weight, dislacement and horsepower
+#mpg01 is negatively correlated with cylinders, weight, dislacement and horsepower and positively correlated to acceleration. 
 
 boxplot(Auto$mpg01, Auto$horsepower)
 boxplot(Auto$mpg01, Auto$displacement)
-boxplot(Auto$mpg01, Auto$cylinders)
+boxplot(Auto$mpg01, Auto$cylinders) 
+#Cylinders, acceleration could be useful to calculate mpg01
 boxplot(Auto$mpg01, Auto$acceleration)
 boxplot(Auto$mpg01, Auto$weight)
 ```
@@ -37,57 +38,48 @@ boxplot(Auto$mpg01, Auto$weight)
 
 #c) 
 
-i <- sample(1:nrow(Auto), size= nrow(Auto)/2)
-For_Training <- Auto[i,]
-For_Testing <- Auto[-i,]
-
-train = (year %% 2 == 0) # if the year is even
-test = !train
-Auto.train = Auto[train,]
-Auto.test = Auto[test,]
-mpg01.test = mpg01[test]
+i <- sample(1:nrow(Auto), size= nrow(Auto)/2) 
+train = i
+test = !i
+For_Training = Auto[i,]
+For_Testing = Auto[-i,]
+mpg01.test = mpg01[-i]
 
 #d)
 
 # LDA
-lda.fit = lda(mpg01 ~ cylinders + weight + displacement + horsepower, data = For_Training)
-lda.predict = predict(lda.fit, For_Training)
-mean(lda.pred$class != mpg01.test)
+lda.fit = lda(mpg01 ~ cylinders + weight + displacement + horsepower +acceleration, data = For_Training)
+lda.predict = predict(lda.fit, For_Testing)
+mean(lda.predict$class != mpg01.test)
 
-lda.fit = lda(mpg01 ~ cylinders + weight + displacement + horsepower, data = Auto, 
-    subset = train)
-lda.predict = predict(lda.fit, Auto.test)
-mean(lda.pred$class != mpg01.test)
-
-#The test error rate is 12.6% 
+#The test error rate is 7.14% 
 
 #e) 
 
 # QDA
-qda.fit = qda(mpg01 ~ cylinders + weight + displacement + horsepower, data = Auto, 
-    subset = train)
-qda.pred = predict(qda.fit, Auto.test)
+qda.fit = qda(mpg01 ~ cylinders + weight + displacement + horsepower +acceleration, data = For_Training)
+qda.pred = predict(qda.fit, For_Testing)
 mean(qda.pred$class != mpg01.test)
 
-#The test error rate is 13.2% 
+#The test error rate is 8.16% 
 
 #f)
 
 # Logistic regression
-glm.fit = glm(mpg01 ~ cylinders + weight + displacement + horsepower, data = Auto, 
-    family = binomial, subset = train)
-glm.probs = predict(glm.fit, Auto.test, type = "response")
+
+glm.fit = glm(mpg01 ~ cylinders + weight + displacement + horsepower +acceleration, data = Auto, family = binomial, subset = train)
+glm.probs = predict(glm.fit,For_Testing, type = "response")
 glm.pred = rep(0, length(glm.probs))
 glm.pred[glm.probs > 0.5] = 1
 mean(glm.pred != mpg01.test)
 
-#The test error rate is 12.1%
+#The test error rate is 7.65%
 
 #g) 
 
-train.X = cbind(cylinders, weight, displacement, horsepower)[train, ]
-test.X = cbind(cylinders, weight, displacement, horsepower)[test, ]
-train.mpg01 = mpg01[train]
+train.X = cbind(cylinders, weight, displacement, horsepower, acceleration)[i, ]
+test.X = cbind(cylinders, weight, displacement, horsepower, acceleration)[-i, ]
+train.mpg01 = mpg01[i]
 set.seed(1)
 # KNN (k=1)
 knn.pred = knn(train.X, test.X, train.mpg01, k = 1)
@@ -101,7 +93,7 @@ mean(knn.pred != mpg01.test)
 knn.pred = knn(train.X, test.X, train.mpg01, k = 100)
 mean(knn.pred != mpg01.test)
 
-#k=1, 15.4% test error rate. k=10, 16.5% test error rate. k=100, 14.3% test error rate. K of 100 seems to perform the best. 100 nearest neighbors.
+#k=1, 15.81% is the test error rate. k=10 and 100, 9.69% is the test error rate. K= 100 has the lowest test error rate. 
 
 ```
 4.7.13
@@ -110,9 +102,58 @@ mean(knn.pred != mpg01.test)
 library(MASS)
 summary(Boston)
 attach(Boston)
+```
+
+```{r}
+crim01 = rep(0, length(Boston$crim))
+crim01[crim > median(crim)] = 1
+Boston = data.frame(Boston, crim01)
+
+set.seed(1)
+inds <- sample(1:nrow(Boston), size = nrow(Boston)/2)
+trainSet <- Boston[inds, ]
+testSet <- Boston[-inds, ]
+crim01.test= crim01[-inds]
+
+#Logistic regression
+#When rad and tax are predictors
+
+glm.fit <- glm(crim01 ~ rad+tax, data = trainSet)
+glm.probs <- predict(glm.fit, newdata = testSet, type = "response")
+glm.pred = rep(0, nrow(trainSet))
+glm.pred[glm.probs>0.8]=1
+mean(glm.pred)
+
+#The test error rate is 23.71%
 
 
+#LDA
 
+lda.fit = lda(crim01 ~ rad+tax, data = trainSet)
+lda.predict = predict(lda.fit, testSet)
+mean((lda.predict$class != testSet$crim01)^2)
+
+#The test error is 25.69%
+
+#KNN
+
+train.X = cbind(rad,tax)[inds, ]
+test.X = cbind(rad,tax)[-inds, ]
+train.crim01 = crim01[inds]
+set.seed(1)
+# KNN (k=1)
+knn.pred = knn(train.X, test.X, train.crim01, k = 1)
+mean(knn.pred != crim01.test)
+
+# KNN (k=10)
+knn.pred = knn(train.X, test.X, train.crim01, k = 10)
+mean(knn.pred != crim01.test)
+
+# KNN (k=100)
+knn.pred = knn(train.X, test.X, train.crim01, k = 100)
+mean(knn.pred != crim01.test)
+
+#k=1, 7.11% is the test error rate. k=10, 16.20% is the test error rate and k=100, 27.66% is the test error rate. K= 1 has the lowest test error rate. 
 ```
 
 
@@ -123,7 +164,8 @@ Submitted through a picture - FullSizeRender.jpg
 
 4.7.8:
 
-For KNN with K=1, the training error rate is 0% because for any training observation, its nearest neighbor will be the response itself. Thus KNN has a test error rate of 36%. Since, 36% is greater than 30%, it would be preferable to choose logistic regression for classification of new observations. 
+For KNN with K=1, the training error rate is 0% because for any training observation, its nearest neighbor will be the response itself. 
+Thus, KNN has a test error rate of 36% on test data since 18% is the average of the two. Since, 36% is greater than 30%, which is the error rate of logistic regression on the test data, it would be preferable to choose logistic regression for classification of new observations. 
 
 4.7.9:
 
