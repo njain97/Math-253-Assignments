@@ -44,8 +44,9 @@ test_set <- College[-sample, ]
 #b) 
 
 lm.fit <- lm(Apps ~ ., data=train_set)
-lm.pred <- predict(lm.fit, test_set)
+lm.pred <- predict(lm.fit, newdata = test_set)
 mean((lm.pred - test_set$Apps)^2)
+
 #The test error rate is 1088625
 
 #c) 

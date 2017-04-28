@@ -178,7 +178,7 @@ test_set &lt;- College[-sample, ]
 #b) 
 
 lm.fit &lt;- lm(Apps ~ ., data=train_set)
-lm.pred &lt;- predict(lm.fit, test_set)
+lm.pred &lt;- predict(lm.fit, newdata = test_set)
 mean((lm.pred - test_set$Apps)^2)</code></pre>
 <pre><code>## [1] 1108531</code></pre>
 <pre class="r"><code>#The test error rate is 1088625
