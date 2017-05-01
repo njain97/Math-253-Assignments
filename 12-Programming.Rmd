@@ -1,7 +1,72 @@
 # In-Class Programming Activity, Day 12
 
-Your work goes here ...
+#Nikhita Jain
 
+### Create generated data
+```{r}
+n_cases <- 10000
+red_mean <- c(1,0)
+green_mean <- c(0,-1)
+blue_mean <- c(-1,1)
+covar_red <- matrix(c(3, -1.7, -1.7, 1), nrow = 2, ncol=2)
+covar_blue <- matrix(c(2, 1.5, 1.5, 3), nrow = 2, ncol = 2)
+One <- matrix(rnorm(2*n_cases, mean = 0, sd = 1), nrow = n_cases, ncol = 2)
+Two <- matrix(rnorm(2*n_cases, mean = 0, sd = 1), nrow = n_cases, ncol = 2)
+Three <- matrix(rnorm(2*n_cases, mean = 0, sd = 1), nrow = n_cases, ncol = 2)
+```
+
+```{r}
+Red <- One %*% chol(covar_red)
+Green <- Two %*% chol(covar_red)
+Blue <- Three %*% chol(covar_blue)
+```
+
+```{r}
+Red <- t(t(Red) + red_mean)
+Green <- t(t(Green) + green_mean)
+Blue <- t(t(Blue) + blue_mean)
+```
+
+```{r}
+Red <- data.frame(x=Red[,1],y=Red[,2],class=rep("red",nrow(Red)), stringsAsFactors = F)
+Green <- data.frame(x=Green[,1],y=Green[,2],class=rep("green",nrow(Red)), stringsAsFactors = F)
+Blue <- data.frame(x=Blue[,1],y=Blue[,2],class=rep("blue",nrow(Red)), stringsAsFactors = F)
+```
+
+```{r}
+Same_sigma <- rbind(Red, Green)
+Different_sigma <- rbind(Red, Blue)
+```
+
+## LDA and QDA
+
+```{r}
+mod_LDA_one <- MASS::lda(class~x+y, data=Same_sigma)
+test_LDA_one <- predict(mod_LDA_one, newdata = Same_sigma)
+```
+
+```{r}
+mod_QDA_one <- MASS::qda(class~x+y, data=Same_sigma)
+test_QDA_one <- predict(mod_QDA_one, newdata= Same_sigma)
+```
+
+## Confusion matrix
+
+```{r}
+table(Same_sigma$class, test_LDA_one$class)
+table(Different_sigma$class, test_QDA_one$class)
+```
+
+Both models perform equally well.
+
+```{r}
+mod_LDA_two <- MASS::lda(class~x+y,data=Different_sigma)
+test_LDA_two <- predict(mod_LDA_two, newdata=Different_sigma)
+mod_QDA_two <- MASS::qda(class~x+y, data=Different_sigma)
+test_QDA_two <- predict(mod_QDA_two, newdata=Different_sigma)
+table(Different_sigma$class, test_LDA_two$class)
+table(Different_sigma$class, test_QDA_two$class)
+```
 
 
 ## Test statements
